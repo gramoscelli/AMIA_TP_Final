@@ -106,96 +106,50 @@
     
 % Slide 1
 \begin{frame}
-  \frametitle{Introducción al problema}
+  \frametitle{Comparativa de Métodos: Implementaciones}
 
-  \begin{itemize}
-    \item Comparativa de métodos para mejorar la eficiencia de predicción:
-    \begin{itemize}
-      \item \texttt{QDA}: Métodos estándar con ciclos \texttt{for}.
-      \item \texttt{TensorizedQDA}: Uso de tensores para mayor rapidez.
-      \item \texttt{FasterQDA}: Implementación optimizada sin ciclos.
-    \end{itemize}
-    \item Propósito: Acelerar la predicción eliminando ciclos innecesarios.
-  \end{itemize}
+  \begin{table}[h!]
+    \centering
+    \begin{tabular}{@{}lcc@{}}
+      \toprule
+      \textbf{Método}       & \texttt{\_predict\_one}                    & \texttt{predict}                      \\ 
+      \midrule
+      \texttt{QDA}          & Ciclo \texttt{for} por clase              & Ciclo \texttt{for} por observación    \\ 
+      \texttt{TensorizedQDA}& Sin ciclos                                & Ciclo \texttt{for} por observación    \\ 
+      \texttt{fasterQDA}    & Todo tensorizado                          & Todo tensorizado                      \\ 
+      \bottomrule
+    \end{tabular}
+    \caption{Resumen de las diferencias entre \texttt{QDA}, \texttt{TensorizedQDA} y \texttt{fasterQDA}.}
+  \end{table}
 
 \end{frame}
 
-% Slide 2
 \begin{frame}
-  \frametitle{\texttt{QDA}: Implementación básica}
+  \frametitle{Comparativa de Dimensiones: QDA, TensorizedQDA y fasterQDA}
 
   \begin{itemize}
-    \item Utiliza el método \texttt{\_predict\_one(x)}:
-    \begin{itemize}
-      \item Recorre cada clase (\texttt{for} interno).
-      \item Método iterativo para calcular la verosimilitud.
-    \end{itemize}
-    \item Limitación: Ineficiente para grandes volúmenes de datos.
-    \item Tiempo: Lento debido a múltiples ciclos.
+    \item X\_unbiased (\(\mathbf{x} - \mu_j)\): Vector de observaciones sin promedios.
+    \item Cov\_inv (\(\mathbf{\Sigma_j^{-1}}\)): Matriz de covarianza invertida.
+    \item Prod\_int: \((\mathbf{x} - \mu_j)^T \mathbf{\Sigma_j^{-1}} (\mathbf{x} - \mu_j)\).
+    \item log\_vero: \( \frac{1}{2} \log{\left|\Sigma_j^{-1}\right|} - \frac{1}{2} (\mathbf{x} - \mu_j)^T \mathbf{\Sigma_j^{-1}} (\mathbf{x} - \mu_j)\).
+
+
   \end{itemize}
+
+  \begin{table}[h!]
+    \centering
+    \begin{tabular}{@{}lcccc@{}}
+      \toprule
+      \textbf{Método}     		  & X\_unbiased 				 	&Cov\_inv 				 & Prod\_int				& 	 log\_vero		 	 \\ 
+      \midrule
+      \texttt{QDA}         		 & \(4 \times 1\)              		    & \(4 \times 4\)           		 & \(1\)            			& 	 \(1\)				 \\ 
+      \texttt{TensorizedQDA}	 & \(3 \times 4 \times 1\)           & \(3 \times 4 \times 4\)     & \(3 \times 1 \)		 	& 	 \(3 \times 1\)		\\ 
+      \texttt{fasterQDA}  	  	 & \(3 \times 4 \times n\)           & \(3 \times 4 \times 4\)     & \(3 \times n \times n\) & 	\(3 \times n \) 		\\ 
+      \bottomrule
+    \end{tabular}
+    \caption{Dimensiones de las variables principales por método.}
+  \end{table}
 
 \end{frame}
 
-% Slide 3
-\begin{frame}
-  \frametitle{\texttt{TensorizedQDA}: Uso de tensores}
-
-  \begin{itemize}
-    \item Expande el set de predicción \( X \in \mathbb{R}^{p \times n} \):
-    \[
-    X_{\text{expanded}} \in \mathbb{R}^{\text{clases} \times p \times n}
-    \]
-    \item Los promedios se almacenan en:
-    \[
-    \text{tensor\_means} \in \mathbb{R}^{\text{clases} \times p \times 1}
-    \]
-    \item Permite operaciones matriciales sin ciclos adicionales.
-    \item Mejora significativa en eficiencia.
-  \end{itemize}
-
-\end{frame}
-
-% Slide 4
-\begin{frame}
-  \frametitle{\texttt{FasterQDA}: Optimización total}
-
-  \begin{itemize}
-    \item Cálculo del producto interno necesario para la verosimilitud:
-    \[
-    \text{inner\_prod\_mat} = \text{unbiased\_X\_transposed} \, @ \, \text{self.tensor\_inv\_cov} \, @ \, \text{unbiased\_X}
-    \]
-    \item Diagonalización para reducir dimensiones.
-    \item Uso del determinante de la matriz de covarianza:
-    \[
-    \frac{1}{2} \log |\Sigma_j^{-1}|
-    \]
-    \item Todo en una sola pasada sin ciclos.
-  \end{itemize}
-
-\end{frame}
-
-% Slide 5
-\begin{frame}
-  \frametitle{Comparativa de Tiempos}
-
-  \begin{itemize}
-    \item Resultados experimentales:
-    \begin{itemize}
-      \item \texttt{QDA}: 
-      \[
-      \text{Tiempo: } 0.00242 \, \text{s} \quad (\text{std: } 0.00055)
-      \]
-      \item \texttt{TensorizedQDA}: 
-      \[
-      \text{Tiempo: } 0.00062 \, \text{s} \quad (\text{std: } 0.00051)
-      \]
-      \item \texttt{FasterQDA}: 
-      \[
-      \text{Tiempo: } 0.00010 \, \text{s} \quad (\text{std: } 0.00030)
-      \]
-    \end{itemize}
-    \item Aceleración significativa al eliminar ciclos.
-  \end{itemize}
-
-\end{frame}
 \end{document}
