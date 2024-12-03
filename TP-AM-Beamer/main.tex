@@ -24,7 +24,11 @@
 \usepackage{fancybox} 
 \usepackage{eurosym} 
 
+
+\usepackage{amsfonts}
 \usepackage{amssymb}
+\usepackage{amsmath}
+
 % Tick mark
 \newcommand{\tick}{\checkmark}
 % Cross mark
@@ -41,8 +45,6 @@
 \renewcommand{\thefootnote}{\fnsymbol{footnote}}
 
 
-
-\usepackage{amsmath}
 
 \captionsetup[figure]{font=scriptsize}
 \captionsetup[subfigure]{font=tiny}
@@ -89,74 +91,111 @@
 
 % Slide ---------------------------------------------------------------------------------------------------------------------------------
 % ---------------------------------------------------------------------------------------------------------------------------------------
-\begin{frame}
-    \titlepage % Display the title page
-\end{frame}
+%\begin{frame}
+ %   \titlepage % Display the title page
+%\end{frame}
 
 % Slide ---------------------------------------------------------------------------------------------------------------------------------
 %----------------------------------------------------------------------------------------------------------------------------------------
+%\begin{frame}
+%    \scriptsize
+%    \frametitle{Outline}
+%    \tableofcontents % Display the table of contents
+%\end{frame}
+
+    
+% Slide 1
 \begin{frame}
-    \scriptsize
-    \frametitle{Outline}
-    \tableofcontents % Display the table of contents
-\end{frame}
+  \frametitle{Introducción al problema}
 
-    
-\section{Introduction}
-\subsection{Geometry}
-\begin{frame}{Geometry}
-    \begin{figure}
-        \includegraphics[width=1\linewidth]{figures/geometries-1.2.png}
-        \caption{Geometry analyzed: (a) real geometry, (b) simplified geometry without isolation, and (c) simplified geometry with isolation. Dimensions, components, and boundary conditions are indicated.}
-        \label{fig:figure1}
-    \end{figure}
+  \begin{itemize}
+    \item Comparativa de métodos para mejorar la eficiencia de predicción:
+    \begin{itemize}
+      \item \texttt{QDA}: Métodos estándar con ciclos \texttt{for}.
+      \item \texttt{TensorizedQDA}: Uso de tensores para mayor rapidez.
+      \item \texttt{FasterQDA}: Implementación optimizada sin ciclos.
+    \end{itemize}
+    \item Propósito: Acelerar la predicción eliminando ciclos innecesarios.
+  \end{itemize}
 
 \end{frame}
 
+% Slide 2
+\begin{frame}
+  \frametitle{\texttt{QDA}: Implementación básica}
 
-\subsection{Ecuaciones}
-\begin{frame}{Fórmulas Matemáticas}
+  \begin{itemize}
+    \item Utiliza el método \texttt{\_predict\_one(x)}:
+    \begin{itemize}
+      \item Recorre cada clase (\texttt{for} interno).
+      \item Método iterativo para calcular la verosimilitud.
+    \end{itemize}
+    \item Limitación: Ineficiente para grandes volúmenes de datos.
+    \item Tiempo: Lento debido a múltiples ciclos.
+  \end{itemize}
 
-Ejemplos :
+\end{frame}
 
-\begin{itemize}
-    \item Ecuación de la energía: 
+% Slide 3
+\begin{frame}
+  \frametitle{\texttt{TensorizedQDA}: Uso de tensores}
+
+  \begin{itemize}
+    \item Expande el set de predicción \( X \in \mathbb{R}^{p \times n} \):
     \[
-    \frac{dE}{dt} = P - \dot{Q}
+    X_{\text{expanded}} \in \mathbb{R}^{\text{clases} \times p \times n}
     \]
-    donde \( P \) es la potencia y \( \dot{Q} \) es la tasa de transferencia de calor.
-
-    \item Ecuación de la ecuación de calor unidimensional:
+    \item Los promedios se almacenan en:
     \[
-    \frac{\partial T}{\partial t} = \alpha \frac{\partial^2 T}{\partial x^2}
+    \text{tensor\_means} \in \mathbb{R}^{\text{clases} \times p \times 1}
     \]
-    donde \( \alpha \) es la difusividad térmica.
-
-    \item La ecuación de la conservación de la masa:
-    \[
-    \nabla \cdot \vec{v} = 0
-    \]
-\end{itemize}
+    \item Permite operaciones matriciales sin ciclos adicionales.
+    \item Mejora significativa en eficiencia.
+  \end{itemize}
 
 \end{frame}
 
+% Slide 4
+\begin{frame}
+  \frametitle{\texttt{FasterQDA}: Optimización total}
 
-\begin{frame}[fragile]
-\frametitle{Código en Python}
-\scriptsize
-% \tiny % tamano de letra más chico, para toda la slide
-
-A continuación, se muestra un ejemplo de código en Python:
-
-    \begin{lstlisting}[language=Python, style=pythonstyle]
-    # Este es un ejemplo de Python
-    def suma(a, b):
-        return a + b
-    
-    resultado = suma(5, 3)
-    print("El resultado es:", resultado)
-    \end{lstlisting}
+  \begin{itemize}
+    \item Cálculo del producto interno necesario para la verosimilitud:
+    \[
+    \text{inner\_prod\_mat} = \text{unbiased\_X\_transposed} \, @ \, \text{self.tensor\_inv\_cov} \, @ \, \text{unbiased\_X}
+    \]
+    \item Diagonalización para reducir dimensiones.
+    \item Uso del determinante de la matriz de covarianza:
+    \[
+    \frac{1}{2} \log |\Sigma_j^{-1}|
+    \]
+    \item Todo en una sola pasada sin ciclos.
+  \end{itemize}
 
 \end{frame}
 
+% Slide 5
+\begin{frame}
+  \frametitle{Comparativa de Tiempos}
+
+  \begin{itemize}
+    \item Resultados experimentales:
+    \begin{itemize}
+      \item \texttt{QDA}: 
+      \[
+      \text{Tiempo: } 0.00242 \, \text{s} \quad (\text{std: } 0.00055)
+      \]
+      \item \texttt{TensorizedQDA}: 
+      \[
+      \text{Tiempo: } 0.00062 \, \text{s} \quad (\text{std: } 0.00051)
+      \]
+      \item \texttt{FasterQDA}: 
+      \[
+      \text{Tiempo: } 0.00010 \, \text{s} \quad (\text{std: } 0.00030)
+      \]
+    \end{itemize}
+    \item Aceleración significativa al eliminar ciclos.
+  \end{itemize}
+
+\end{frame}
 \end{document}
