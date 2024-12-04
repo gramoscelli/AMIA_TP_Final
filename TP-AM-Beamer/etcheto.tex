@@ -1,5 +1,10 @@
 \begin{frame}
-  \frametitle{Comparativa de Métodos: Implementaciones}
+  \frametitle{Comparación de Métodos}
+  \begin{itemize}
+    \item[$\blacktriangleright$] \texttt{QDA} 
+    \item[$\blacktriangleright$] \texttt{TensorizedQDA}
+    \item[$\blacktriangleright$] \texttt{fasterQDA} (matriz \(n \times n\))
+  \end{itemize}
 
   \begin{table}[h!]
     \centering
@@ -7,9 +12,9 @@
       \toprule
       \textbf{Método}       & \texttt{\_predict\_one}                    & \texttt{predict}                      \\ 
       \midrule
-      \texttt{QDA}          & Ciclo \texttt{for} por clase              & Ciclo \texttt{for} por observación    \\ 
-      \texttt{TensorizedQDA}& Sin ciclos                                & Ciclo \texttt{for} por observación    \\ 
-      \texttt{fasterQDA}    & Todo tensorizado                          & Todo tensorizado                      \\ 
+      \texttt{QDA}          & \texttt{for} por clase              & Ciclo \texttt{for} por observación    \\ 
+      \texttt{TensorizedQDA}& una pasada por observación                          &\texttt{for} por observación    \\ 
+      \texttt{fasterQDA}    & una pasada                          & una pasada                   \\ 
       \bottomrule
     \end{tabular}
     \caption{Resumen de las diferencias entre \texttt{QDA}, \texttt{TensorizedQDA} y \texttt{fasterQDA}.}
@@ -18,13 +23,13 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{Comparativa de Dimensiones: QDA, TensorizedQDA y fasterQDA}
+  \frametitle{Comparación de Dimensiones}
 
   \begin{itemize}
     \item X\_unbiased (\(\mathbf{x} - \mu_j)\): Vector de observaciones sin promedios.
     \item Cov\_inv (\(\mathbf{\Sigma_j^{-1}}\)): Matriz de covarianza invertida.
     \item Prod\_int: \((\mathbf{x} - \mu_j)^T \mathbf{\Sigma_j^{-1}} (\mathbf{x} - \mu_j)\).
-    \item log\_vero: \( \frac{1}{2} \log{\left|\Sigma_j^{-1}\right|} - \frac{1}{2} (\mathbf{x} - \mu_j)^T \mathbf{\Sigma_j^{-1}} (\mathbf{x} - \mu_j)\).
+    \item Log\_vero: \( \frac{1}{2} \log{\left|\Sigma_j^{-1}\right|} - \frac{1}{2} (\mathbf{x} - \mu_j)^T \mathbf{\Sigma_j^{-1}} (\mathbf{x} - \mu_j)\).
 
 
   \end{itemize}
@@ -33,7 +38,7 @@
     \centering
     \begin{tabular}{@{}lcccc@{}}
       \toprule
-      \textbf{Método}     		  & X\_unbiased 				 	&Cov\_inv 				 & Prod\_int				& 	 log\_vero		 	 \\ 
+      \textbf{Método}     		  & X\_unbiased 				 	&Cov\_inv 				 & Prod\_int				& 	 Log\_vero		 	 \\ 
       \midrule
       \texttt{QDA}         		 & \(4 \times 1\)              		    & \(4 \times 4\)           		 & \(1\)            			& 	 \cellcolor{yellow}\(1\)				 \\ 
       \texttt{TensorizedQDA}	 & \(3 \times 4 \times 1\)           & \(3 \times 4 \times 4\)     & \(3 \times 1 \)		 	& 	\cellcolor{yellow} \(3 \times 1\)		\\ 
@@ -44,16 +49,16 @@
   \end{table}
 
   \begin{itemize}
-    \item[$\blacktriangleright$] Uso de \texttt{np.diagonal()} para convertir \texttt{Prod\_int} de \(3 \times n \times n\) a \(3 \times n\) en \texttt{log\_vero}.
+    \item[$\blacktriangleright$]\texttt{np.diagonal()} convierte \texttt{Prod\_int} de \(3 \times n \times n\) a \(3 \times n\) en \texttt{Log\_vero}.
   \end{itemize}
 
 \end{frame}
 
 \begin{frame}
-  \frametitle{Comparativa de Tiempos: QDA, TensorizedQDA y fasterQDA}
+  \frametitle{Comparación de Tiempos: QDA, TensorizedQDA y FasterQDA}
 
   \begin{itemize}
-    \item[$\blacktriangleright$] Se utiliza el set de test con un split de 0.3. En este caso, $n=40$
+    \item[$\blacktriangleright$] Set Test, split de 0.3 ($n=45$).
   \end{itemize}
 
   \begin{table}[h!]
@@ -70,16 +75,25 @@
       \caption{Tiempos de ejecución de los métodos QDA, TensorizedQDA y FasterQDA.}
   \end{table}
 
+
+  \begin{itemize}
+    \item[$\blacktriangleright$] \texttt{TensorizedQDA} speedup x4  sobre \texttt{QDA} 
+    \item[$\blacktriangleright$] \texttt{fasterQDA} speedup x6  sobre \texttt{TensorizedQDA}
+  \end{itemize}
+
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{Comparativa de Tiempos: fasterQDA vs. FasterQDA}
+  \frametitle{Comparación de Tiempos: fasterQDA vs. FasterQDA}
 
-  
+    \begin{itemize}
+    \item[$\blacktriangleright$] \texttt{fasterQDA} (matriz \(n \times n\)) vs. \texttt{FasterQDA} 
+  \end{itemize}
+  \vspace{0.4cm}
   \begin{itemize}
     \item[$\blacktriangleright$] Usando \( \text{diag}(A \cdot B) = \sum_{\text{col}}(A \odot B^T) = \text{np.sum}(A \odot B^T, \text{axis}=1) \) es posible acelerar el método \texttt{fasterQDA}, evitando pasar por la matrices de \( n \times n\).
-    \item[$\blacktriangleright$] Se utiliza el set de test con un split de 0.3. En este caso, $n=45$
+    \item[$\blacktriangleright$] Set Test, split de 0.3 ($n=45$).
   \end{itemize}
 
   \begin{table}[h!]
@@ -94,6 +108,10 @@
       \end{tabular}
       \caption{Tiempos de ejecución de los fasterQDA y FasterQDA.}
   \end{table}
+
+  \begin{itemize}
+    \item[$\blacktriangleright$] No se ve un speedup considerable!
+  \end{itemize}
 
 \end{frame}
 
@@ -126,13 +144,16 @@ inner_prod = (A * unbiased_X_transposed).sum(axis=-1)  # Forma (classes, n)
 
 \begin{frame}[fragile]
     \frametitle{Relación en costos matemáticos entre fasterQDA y FasterQDA}
-  Comparando, puede verse que la relación en costos entre \texttt{fasterQDA} y \texttt{FasterQDA} es:
+  \begin{itemize}
+    \item[$\blacktriangleright$] Relación en costos entre \texttt{fasterQDA} y \texttt{FasterQDA} es:
+  \end{itemize}
+  
   \[
     \frac{classes \times (n \times p^2 + n^2 \times p)}{classes \times (n \times p^2 + n \times p)}
   \]
 
   \begin{itemize}
-    \item[$\blacktriangleright$] Se utiliza el set completo. En este caso, $n=150$
+    \item[$\blacktriangleright$] Full Set ($n=150$).
   \end{itemize}
 
   \begin{table}[h!]
