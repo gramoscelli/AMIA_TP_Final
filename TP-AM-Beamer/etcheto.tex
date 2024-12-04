@@ -12,8 +12,8 @@
       \toprule
       \textbf{Método}       & \texttt{\_predict\_one}                    & \texttt{predict}                      \\ 
       \midrule
-      \texttt{QDA}          & \texttt{for} por clase              & Ciclo \texttt{for} por observación    \\ 
-      \texttt{TensorizedQDA}& una pasada por observación                          &\texttt{for} por observación    \\ 
+      \texttt{QDA}          & \texttt{for} por clase              & \texttt{for} por obs.    \\ 
+      \texttt{TensorizedQDA}& una pasada por obs.                          &\texttt{for} por obs.    \\ 
       \texttt{fasterQDA}    & una pasada                          & una pasada                   \\ 
       \bottomrule
     \end{tabular}
@@ -175,15 +175,27 @@ inner_prod = (A * unbiased_X_transposed).sum(axis=-1)  # Forma (classes, n)
     \frametitle{Speedup de FasterQDA}
 \scriptsize
     \begin{itemize}
-        \item[$\blacktriangleright$]  En resumen, al evitar la matriz \(n \times n\), \texttt{FasterQDA} logra una aceleración significativa, con un speedup teórico de:
+        \item[$\blacktriangleright$]  Al evitar la matriz \(n \times n\), \texttt{FasterQDA} lograría un \textbf{speedup teórico} de:
         \[
             \frac{classes \times (n \times p^2 + n^2 \times p)}{classes \times (n \times p^2 + n \times p)} = \frac{n}{p} \quad \text{para} \quad n \gg p
         \]
-        \item[$\blacktriangleright$]  Sin embargo, en la práctica, las operaciones adicionales reducen esta aceleración, aunque sigue siendo notable.
+        \item[$\blacktriangleright$]  En la práctica, las \textbf{operaciones adicionales reducen} el speedup, aunque sigue siendo notable.
     \end{itemize}
     \begin{figure}
         \centering
-        \includegraphics[width=0.6\textwidth]{../speedup_vs_n.png} % Ruta relativa a la imagen
+        \includegraphics[width=0.7\textwidth]{../speedup_vs_n.png} % Ruta relativa a la imagen
         \caption{Gráfico de Speedup vs. n}
     \end{figure}
+\end{frame}
+
+\begin{frame}[fragile]
+    \frametitle{Conclusiones}
+
+    \begin{itemize}
+        \item[$\blacktriangleright$] Se compararon las diferentes implementaciones de QDA y los tiempos de ejecución.
+        \item[$\blacktriangleright$] Se analizó el costo matemático de las implementaciones \textbf{de una sola pasada} y su relación con el tiempo de ejecución.
+        \item[$\blacktriangleright$] Se analizó brevemente el speedup al evitar pasar por matrices \(n \times n\).
+
+    \end{itemize}
+
 \end{frame}
