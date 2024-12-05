@@ -42,7 +42,7 @@
       \midrule
       \texttt{QDA}         		 & \(4 \times 1\)              		    & \(4 \times 4\)           		 & \(1\)            			& 	 \cellcolor{yellow}\(1\)				 \\ 
       \texttt{TensorizedQDA}	 & \(3 \times 4 \times 1\)           & \(3 \times 4 \times 4\)     & \(3 \times 1 \)		 	& 	\cellcolor{yellow} \(3 \times 1\)		\\ 
-      \texttt{fasterQDA}  	  	 & \(3 \times 4 \times n\)           & \(3 \times 4 \times 4\)     & \(3 \times n \times n\) & 	\cellcolor{yellow}\(3 \times n \) 		\\ 
+      \texttt{fasterQDA}  	  	 & \(3 \times 4 \times n\)           & \(3 \times 4 \times 4\)     &  \cellcolor{yellow} \(3 \times n \times n\) & 	\cellcolor{yellow}\(3 \times n \) 		\\ 
       \bottomrule
     \end{tabular}
     \caption{Dimensiones de las variables principales por método.}
@@ -65,11 +65,11 @@
       \centering
       \begin{tabular}{@{}lcc@{}}
         \toprule
-        \textbf{Método}      & Tiempo (s)           & Desviación estándar (s) \\ 
+        \textbf{Método}      & Tiempo (ms)           & Desviación estándar (ms) \\ 
         \midrule
-        \texttt{QDA}         & 0.00242              & 0.00055                 \\ 
-        \texttt{TensorizedQDA} & 0.00062            & 0.00051                 \\ 
-        \texttt{fasterQDA}   & 0.00010              & 0.00030                 \\ 
+        \texttt{QDA}         & 2.42              & 0.55                 \\ 
+        \texttt{TensorizedQDA} & 0.62            & 0.51                 \\ 
+        \texttt{fasterQDA}   & 0.10              & 0.30                 \\ 
         \bottomrule
       \end{tabular}
       \caption{Tiempos de ejecución de los métodos QDA, TensorizedQDA y FasterQDA.}
@@ -100,10 +100,10 @@
       \centering
       \begin{tabular}{@{}lcc@{}}
         \toprule
-        \textbf{Método}      & Tiempo (s)           & Desviación estándar (s) \\ 
+        \textbf{Método}      & Tiempo (ms)           & Desviación estándar (ms) \\ 
         \midrule
-        \texttt{fasterQDA}   & 0.00010              & 0.00030                 \\ 
-        \texttt{FasterQDA}   & 0.00008              & 0.00027                 \\ 
+        \texttt{fasterQDA}   & 0.10              & 0.30                 \\ 
+        \texttt{FasterQDA}   & 0.08              & 0.27                 \\ 
         \bottomrule
       \end{tabular}
       \caption{Tiempos de ejecución de los fasterQDA y FasterQDA.}
@@ -181,11 +181,11 @@ inner_prod = (A * unbiased_X_transposed).sum(axis=-1)  # Forma (classes, n)
     \frametitle{Speedup de FasterQDA}
 \scriptsize
     \begin{itemize}
-        \item[$\blacktriangleright$]  Al evitar la matriz \(n \times n\), \texttt{FasterQDA} lograría un \textbf{speedup teórico} de:
+        \item[$\blacktriangleright$]  Aumentando el \(n\), \texttt{FasterQDA} podría lograr un \textbf{speedup teórico} de?
         \[
             \frac{classes \times (n \times p^2 + n^2 \times p)}{classes \times (n \times p^2 + n \times p)} = \frac{n}{p} \quad \text{para} \quad n \gg p
         \]
-        \item[$\blacktriangleright$]  En la práctica, las \textbf{operaciones adicionales reducen} el speedup, aunque sigue siendo notable.
+        \item[$\blacktriangleright$]  En la práctica, las \textbf{operaciones adicionales reducen} el speedup, aunque sigue siendo considerable.
     \end{itemize}
     \begin{figure}
         \centering
