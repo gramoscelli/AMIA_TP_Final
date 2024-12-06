@@ -185,7 +185,7 @@ inner_prod = (A * unbiased_X_transposed).sum(axis=-1)  # Forma (classes, n)
         \[
             \frac{classes \times (n \times p^2 + n^2 \times p)}{classes \times (n \times p^2 + n \times p)} = \frac{n}{p} \quad \text{para} \quad n \gg p
         \]
-        \item[$\blacktriangleright$]  En la práctica, las \textbf{operaciones adicionales reducen} el speedup, aunque sigue siendo considerable.
+        \item[$\blacktriangleright$]  En la práctica, las \textbf{operaciones adicionales reducen} el speedup, aunque sigue siendo considerable (de orden $n$).
     \end{itemize}
     \begin{figure}
         \centering
