@@ -9306,7 +9306,7 @@ En este caso, $\text{axis}=1$ representa el segundo eje de la matriz, es decir, 
 <li>faster QDA time: 0.00019 s (std: 0.00039 s)</li>
 <li>Faster QDA time: 0.00011 s (std: 0.00032 s)</li>
 </ul>
-<p>En resumen, al evitar el paso por la matriz $n \times n$, <code>FasterQDA</code> logra speedup significativ. Aunque el límite teórico (si la complejidad de la predicción dependiera sólo del cálculo del producto interno) muestra un speedup de $\frac{n^2 \times p}{n \times p^2} = \frac{n}{p}$ para $n \gg p$ (teniendo en cuenta la relación de costos mostrada), en la práctica, el costo adicional de otras operaciones reduce este speedup, pero hay que notar que el mismo sigue siendo considerable. El speedup alcanzado en estas implementaciones puede verse a continuación:</p>
+<p>En resumen, al evitar el paso por la matriz $n \times n$, <code>FasterQDA</code> logra speedup significativo. Aunque el límite teórico (si la complejidad de la predicción dependiera sólo del cálculo del producto interno) muestra un speedup de $\frac{n^2 \times p}{n \times p^2} = \frac{n}{p}$ para $n \gg p$ (teniendo en cuenta la relación de costos mostrada), en la práctica, el costo adicional de otras operaciones reduce este speedup, pero hay que notar que el mismo sigue siendo considerable (sigue siendo de orden $n$). El speedup alcanzado en estas implementaciones puede verse a continuación:</p>
 <img alt="Gráfico de Speedup vs. n" src="speedup_vs_n.png" width="1000"/>
 </div>
 </div>
