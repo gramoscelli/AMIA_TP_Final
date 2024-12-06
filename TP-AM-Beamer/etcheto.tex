@@ -162,10 +162,10 @@ inner_prod = (A * unbiased_X_transposed).sum(axis=-1)  # Forma (classes, n)
       \centering
       \begin{tabular}{@{}lcc@{}}
         \toprule
-        \textbf{Método}      & Tiempo (s)           & Desviación estándar (s) \\ 
+        \textbf{Método}      & Tiempo (ms)           & Desviación estándar (ms) \\ 
         \midrule
-        \texttt{fasterQDA}   & 0.00019              & 0.00039                 \\ 
-        \texttt{FasterQDA}   & 0.00011              & 0.00032                 \\ 
+        \texttt{fasterQDA}   & 0.19              & 0.39                 \\ 
+        \texttt{FasterQDA}   & 0.11              & 0.32                 \\ 
         \bottomrule
       \end{tabular}
       \caption{Tiempos de ejecución de los fasterQDA y FasterQDA.}
@@ -181,9 +181,9 @@ inner_prod = (A * unbiased_X_transposed).sum(axis=-1)  # Forma (classes, n)
     \frametitle{Speedup de FasterQDA}
 
     \begin{itemize}
-        \item[$\blacktriangleright$]  Aumentando el \(n\), \texttt{FasterQDA} podría lograr un \textbf{speedup teórico} de?
+        \item[$\blacktriangleright$]  Aumentando el \(n\), \texttt{FasterQDA} podría lograr un \textbf{speedup teórico} de:
         \[
-            \frac{classes \times (n \times p^2 + n^2 \times p)}{classes \times (n \times p^2 + n \times p)} = \frac{n}{p} \quad \text{para} \quad n \gg p
+            \frac{ (n \times p^2 + n^2 \times p)}{ \times (n \times p^2 + n \times p)} \approx \frac{n}{p} \quad \text{para} \quad n \gg p
         \]
         \item[$\blacktriangleright$]  En la práctica, las \textbf{operaciones adicionales reducen} el speedup, aunque sigue siendo considerable (de orden $n$).
     \end{itemize}
